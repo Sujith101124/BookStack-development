@@ -55,6 +55,18 @@ class EntitySearchTest extends TestCase
         $res->assertStatus(200);
     }
 
+    public function test_advanced_search_page_shows_additional_filter_controls()
+    {
+        $res = $this->asEditor()->get('/search');
+        $res->assertStatus(200);
+        $res->assertSee('Author');
+        $res->assertSee('Tag');
+        $res->assertSee('Date');
+        $res->assertSee('Workspace');
+        $res->assertSee('Additional Filters');
+        $res->assertSee('Set Value');
+    }
+
     public function test_searching_accents_and_small_terms()
     {
         $page = $this->entities->newPage(['name' => 'My new test quaffleachits', 'html' => 'some áéííúü¿¡ test content a2 orange dog']);

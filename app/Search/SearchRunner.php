@@ -3,6 +3,8 @@
 namespace BookStack\Search;
 
 use BookStack\Entities\EntityProvider;
+use BookStack\Entities\Models\Book;
+use BookStack\Entities\Models\Bookshelf;
 use BookStack\Entities\Models\Entity;
 use BookStack\Entities\Queries\EntityQueries;
 use BookStack\Entities\Tools\EntityHydrator;
@@ -320,6 +322,81 @@ class SearchRunner
     /**
      * Custom entity search filters.
      */
+    protected function filterAuthor(EloquentBuilder $query, string $input, bool $negated): void
+    {
+        $userSlug = $input === 'me' ? user()->slug : trim($input);
+        $user = User::query()->where('slug', '=', $userSlug)->first(['id']);
+        if ($user) {
+            $this->applyNegatableWhere($query, $negated, 'created_by', '=', $user->id);
+        }
+    }
+
+    protected function filterTag(EloquentBuilder $query, string $input, bool $negated): void
+    {
+        $tagInput = trim($input);
+        if ($tagInput === '') {
+            return;
+        }
+
+        $filter = function (EloquentBuilder $query) use ($tagInput): void {
+            $tagParts = explode('=', $tagInput, 2);
+            if (count($tagParts) === 2) {
+                $query->where('name', '=', $tagParts[0])
+                    ->where('value', '=', $tagParts[1]);
+                return;
+            }
+
+            $query->where(function (EloquentBuilder $query) use ($tagInput): void {
+                $query->where('name', '=', $tagInput)
+                    ->orWhere('value', '=', $tagInput);
+            });
+        };
+
+        $negated ? $query->whereDoesntHave('tags', $filter) : $query->whereHas('tags', $filter);
+    }
+
+    protected function filterDate(EloquentBuilder $query, string $input, bool $negated): void
+    {
+        $date = date_create($input);
+        if ($date === false) {
+            return;
+        }
+
+        $dateKey = date_format($date, 'Y-m-d');
+        $filter = function (EloquentBuilder $query) use ($dateKey): void {
+            $query->whereDate('created_at', '=', $dateKey)
+                ->orWhereDate('updated_at', '=', $dateKey);
+        };
+
+        $negated ? $query->whereNot($filter) : $query->where($filter);
+    }
+
+    protected function filterWorkspace(EloquentBuilder $query, string $input, bool $negated): void
+    {
+        $workspaceInput = trim($input);
+        if ($workspaceInput === '') {
+            return;
+        }
+
+        $filter = function (EloquentBuilder $query) use ($workspaceInput): void {
+            $query->where(function (EloquentBuilder $query) use ($workspaceInput): void {
+                $query->where('name', 'like', '%' . $workspaceInput . '%')
+                    ->orWhere('slug', 'like', '%' . $workspaceInput . '%');
+            });
+        };
+
+        $model = $query->getModel();
+        if ($model instanceof Book || $model instanceof Bookshelf) {
+            $negated ? $query->whereNot($filter) : $query->where($filter);
+            return;
+        }
+
+        if (method_exists($model, 'book')) {
+            $negated ? $query->whereDoesntHave('book', $filter) : $query->whereHas('book', $filter);
+            return;
+        }
+    }
+
     protected function filterUpdatedAfter(EloquentBuilder $query, string $input, bool $negated): void
     {
         $date = date_create($input);

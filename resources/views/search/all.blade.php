@@ -58,6 +58,12 @@
                             @endcomponent
                         @endif
 
+                        <h6>{{ trans('entities.search_additional_filters') }}</h6>
+                        @include('search.parts.text-filter', ['name' => 'author', 'filters' => $filterMap])
+                        @include('search.parts.text-filter', ['name' => 'tag', 'filters' => $filterMap])
+                        @include('search.parts.text-filter', ['name' => 'workspace', 'filters' => $filterMap])
+                        @include('search.parts.text-filter', ['name' => 'date', 'filters' => $filterMap])
+
                         <h6>{{ trans('entities.search_date_options') }}</h6>
                         @include('search.parts.date-filter', ['name' => 'updated_after', 'filters' => $filterMap])
                         @include('search.parts.date-filter', ['name' => 'updated_before', 'filters' => $filterMap])
