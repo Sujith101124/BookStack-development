@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 class View extends Model
 {
-    protected $fillable = ['user_id', 'views'];
+    protected $fillable = ['user_id', 'views', 'reading_progress'];
 
     /**
      * Get all owning viewable models.
@@ -48,7 +48,7 @@ class View extends Model
         /** @var View $view */
         $view = $viewable->views()->firstOrNew([
             'user_id' => $user->id,
-        ], ['views' => 0]);
+        ], ['views' => 0, 'reading_progress' => 0]);
 
         $view->forceFill(['views' => $view->views + 1])->save();
 

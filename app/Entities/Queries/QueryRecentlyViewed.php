@@ -31,6 +31,8 @@ class QueryRecentlyViewed
             ->orderBy('views.updated_at', 'desc')
             ->where('user_id', '=', user()->id);
 
+        $query->select(['views.*']);
+
         $views = $query
             ->skip(($page - 1) * $count)
             ->take($count)

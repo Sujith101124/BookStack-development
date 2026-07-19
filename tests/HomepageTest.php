@@ -186,6 +186,22 @@ class HomepageTest extends TestCase
         $this->withHtml($homeVisit)->assertElementContains('.content-wrap', $book->name);
     }
 
+    public function test_homepage_shows_reading_progress_tracker_for_recently_viewed_pages()
+    {
+        $editor = $this->users->editor();
+        $page = $this->entities->page();
+        $page->views()->create([
+            'user_id' => $editor->id,
+            'views' => 1,
+            'reading_progress' => 42,
+        ]);
+
+        $homeVisit = $this->actingAs($editor)->get('/');
+        $this->withHtml($homeVisit)->assertElementContains('#reading-progress-tracker', 'Reading Progress');
+        $this->withHtml($homeVisit)->assertElementContains('#reading-progress-tracker', 'Continue Reading');
+        $this->withHtml($homeVisit)->assertElementContains('#reading-progress-tracker', '42%');
+    }
+
     public function test_new_users_dont_have_any_recently_viewed()
     {
         $user = User::factory()->create();

@@ -56,12 +56,26 @@ class HomeController extends Controller
             $homepageOption = 'default';
         }
 
+        $readingProgressItems = [];
+        if ($this->isSignedIn()) {
+            $readingProgressItems = $recentlyViewed->run(3, 1)
+                ->filter(fn ($entity) => $entity instanceof \BookStack\Entities\Models\Page)
+                ->map(function ($entity) {
+                    $view = $entity->views()->where('user_id', '=', user()->id)->first();
+                    $progress = $view ? max(0, min(100, (int) $view->reading_progress)) : 0;
+
+                    return ['entity' => $entity, 'progress' => $progress];
+                })
+                ->values();
+        }
+
         $commonData = [
             'activity'             => $activity,
             'recents'              => $recents,
             'recentlyUpdatedPages' => $recentlyUpdatedPages,
             'draftPages'           => $draftPages,
             'favourites'           => $favourites,
+            'readingProgressItems' => $readingProgressItems,
         ];
 
         // Add required list ordering & sorting for books & shelves views.

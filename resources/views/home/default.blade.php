@@ -35,6 +35,28 @@
                         ])
                     </div>
                 </div>
+
+                @if(auth()->check() && count($readingProgressItems) > 0)
+                    <div id="reading-progress-tracker" class="card mb-xl">
+                        <h3 class="card-title">{{ trans('entities.reading_progress_tracker') }}</h3>
+                        <div class="px-m">
+                            @foreach($readingProgressItems as $item)
+                                <div class="entity-list-item compact mb-s">
+                                    <a href="{{ $item['entity']->getUrl() }}" class="entity-list-item-link">
+                                        <div class="entity-item-name break-text">{{ $item['entity']->name }}</div>
+                                        <div class="text-muted text-small">{{ trans('entities.continue_reading') }}</div>
+                                        <div class="mt-xs">
+                                            <div class="progress-bar" style="height: 6px; background: #e9ecef; border-radius: 999px; overflow: hidden;">
+                                                <div style="width: {{ $item['progress'] }}%; height: 100%; background: #2f80ed; border-radius: 999px;"></div>
+                                            </div>
+                                            <div class="text-small text-muted mt-xxs">{{ $item['progress'] }}%</div>
+                                        </div>
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
             </div>
 
             <div>
