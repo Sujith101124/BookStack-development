@@ -171,6 +171,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/ajax/page/{id}/save-draft', [EntityControllers\PageController::class, 'saveDraft']);
     Route::get('/ajax/page/{id}', [EntityControllers\PageController::class, 'getPageAjax']);
     Route::delete('/ajax/page/{id}', [EntityControllers\PageController::class, 'ajaxDestroy']);
+    Route::post('/reading-progress/{pageId}', [ActivityControllers\ReadingProgressController::class, 'store']);
+    Route::get('/reading-progress/{pageId}', [ActivityControllers\ReadingProgressController::class, 'show']);
+    Route::get('/continue-reading', [ActivityControllers\ReadingProgressController::class, 'continueReading']);
 
     // Tag routes
     Route::get('/tags', [ActivityControllers\TagController::class, 'index']);

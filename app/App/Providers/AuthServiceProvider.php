@@ -8,6 +8,8 @@ use BookStack\Access\Guards\LdapSessionGuard;
 use BookStack\Access\LdapService;
 use BookStack\Access\LoginService;
 use BookStack\Access\RegistrationService;
+use BookStack\Activity\Models\ReadingProgress;
+use BookStack\Activity\Policies\ReadingProgressPolicy;
 use BookStack\Api\ApiTokenGuard;
 use BookStack\Users\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -21,6 +23,8 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->registerPolicies();
+
         // Password Configuration
         // Changes here must be reflected in ApiDocsGenerate@getValidationAsString.
         Password::defaults(fn () => Password::min(8));
@@ -68,5 +72,10 @@ class AuthServiceProvider extends ServiceProvider
         $this->app->singleton('users.default', function () {
             return User::query()->where('system_name', '=', 'public')->first();
         });
+    }
+
+    protected function registerPolicies(): void
+    {
+        $this->app->make(\Illuminate\Contracts\Auth\Access\Gate::class)->policy(ReadingProgress::class, ReadingProgressPolicy::class);
     }
 }

@@ -17,8 +17,18 @@
     </div>
 
     <main class="content-wrap card">
-        <div component="page-display"
+        <div class="mb-m print-hidden" data-reading-progress-container>
+            <div class="bg-muted" style="height: 6px; border-radius: 999px; overflow: hidden;">
+                <div data-reading-progress-bar style="height: 100%; width: 0%; background: #2f80ed; transition: width 0.2s ease; border-radius: 999px;"></div>
+            </div>
+            <div class="text-right text-small text-muted mt-xs">
+                <span data-reading-progress-text>0%</span>
+                <span data-reading-progress-badge class="ml-xs text-success" hidden></span>
+            </div>
+        </div>
+        <div component="page-display reading-progress"
              option:page-display:page-id="{{ $page->id }}"
+             option:reading-progress:page-id="{{ $page->id }}"
              class="page-content clearfix">
             @include('pages.parts.page-display')
         </div>

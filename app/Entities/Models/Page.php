@@ -2,6 +2,7 @@
 
 namespace BookStack\Entities\Models;
 
+use BookStack\Activity\Models\ReadingProgress;
 use BookStack\Entities\Tools\PageContent;
 use BookStack\Permissions\PermissionApplicator;
 use BookStack\Uploads\Attachment;
@@ -151,5 +152,10 @@ class Page extends BookChild
     public function relatedData(): HasOne
     {
         return $this->hasOne(EntityPageData::class, 'page_id', 'id');
+    }
+
+    public function readingProgress(): HasMany
+    {
+        return $this->hasMany(ReadingProgress::class);
     }
 }

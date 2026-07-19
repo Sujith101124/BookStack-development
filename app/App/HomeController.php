@@ -3,6 +3,7 @@
 namespace BookStack\App;
 
 use BookStack\Activity\ActivityQueries;
+use BookStack\Activity\Services\ReadingProgressService;
 use BookStack\Entities\Models\Page;
 use BookStack\Entities\Queries\EntityQueries;
 use BookStack\Entities\Queries\QueryRecentlyViewed;
@@ -27,6 +28,7 @@ class HomeController extends Controller
         ActivityQueries $activities,
         QueryRecentlyViewed $recentlyViewed,
         QueryTopFavourites $topFavourites,
+        ReadingProgressService $readingProgressService,
     ) {
         $activity = $activities->latest(10);
         $draftPages = [];
@@ -58,13 +60,13 @@ class HomeController extends Controller
 
         $readingProgressItems = [];
         if ($this->isSignedIn()) {
-            $readingProgressItems = $recentlyViewed->run(3, 1)
-                ->filter(fn ($entity) => $entity instanceof \BookStack\Entities\Models\Page)
-                ->map(function ($entity) {
-                    $view = $entity->views()->where('user_id', '=', user()->id)->first();
-                    $progress = $view ? max(0, min(100, (int) $view->reading_progress)) : 0;
-
-                    return ['entity' => $entity, 'progress' => $progress];
+            $readingProgressItems = $readingProgressService->continueReadingForUser(user(), 10)
+                ->map(function ($record) {
+                    return [
+                        'entity' => $record->page,
+                        'progress' => $record->progress_percentage,
+                        'lastOpenedAt' => $record->last_opened_at,
+                    ];
                 })
                 ->values();
         }

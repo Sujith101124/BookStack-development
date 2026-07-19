@@ -43,6 +43,7 @@ export {PageDisplay} from './page-display';
 export {PageEditor} from './page-editor';
 export {PagePicker} from './page-picker';
 export {PermissionsTable} from './permissions-table';
+export {ReadingProgress} from './reading-progress';
 export {Pointer} from './pointer';
 export {Popup} from './popup';
 export {SettingAppColorScheme} from './setting-app-color-scheme';

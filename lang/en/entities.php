@@ -31,6 +31,7 @@ return [
     'my_recently_viewed' => 'My Recently Viewed',
     'reading_progress_tracker' => 'Reading Progress',
     'continue_reading' => 'Continue Reading',
+    'completed' => 'Completed',
     'my_most_viewed_favourites' => 'My Most Viewed Favourites',
     'my_favourites' => 'My Favourites',
     'no_pages_viewed' => 'You have not viewed any pages',

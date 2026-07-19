@@ -7,6 +7,7 @@ use BookStack\Access\Notifications\ResetPasswordNotification;
 use BookStack\Access\SocialAccount;
 use BookStack\Activity\Models\Favourite;
 use BookStack\Activity\Models\Loggable;
+use BookStack\Activity\Models\ReadingProgress;
 use BookStack\Activity\Models\Watch;
 use BookStack\Api\ApiToken;
 use BookStack\App\Model;
@@ -201,6 +202,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function socialAccounts(): HasMany
     {
         return $this->hasMany(SocialAccount::class);
+    }
+
+    public function readingProgress(): HasMany
+    {
+        return $this->hasMany(ReadingProgress::class);
     }
 
     /**
