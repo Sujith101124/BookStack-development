@@ -11,7 +11,7 @@ class CreatePageReadingProgressTable extends Migration
         Schema::create('page_reading_progress', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('user_id');
-            $table->unsignedInteger('page_id');
+            $table->unsignedBigInteger('page_id');
             $table->unsignedTinyInteger('progress_percentage')->default(0);
             $table->unsignedInteger('scroll_position')->default(0);
             $table->boolean('completed')->default(false);
@@ -22,7 +22,7 @@ class CreatePageReadingProgressTable extends Migration
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('page_id')->references('id')->on('pages')->onDelete('cascade');
+            $table->foreign('page_id')->references('id')->on('entities')->onDelete('cascade');
             $table->index(['user_id', 'last_opened_at']);
             $table->index(['user_id', 'page_id'], 'page_reading_progress_user_page_index');
         });
